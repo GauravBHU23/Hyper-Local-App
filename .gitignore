@@ -8,6 +8,8 @@ Thumbs.db
 .env
 .env.local
 *.log
+Deployments/
+.vercel/
 
 # Frontend (Next.js / Node)
 Frontend/node_modules/
@@ -16,6 +18,7 @@ Frontend/out/
 Frontend/build/
 Frontend/.turbo/
 Frontend/coverage/
+Frontend/tsconfig.tsbuildinfo
 Frontend/npm-debug.log*
 Frontend/yarn-debug.log*
 Frontend/yarn-error.log*
