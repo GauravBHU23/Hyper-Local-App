@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 import { Navbar } from "@/components/layout/Navbar";
 import { useLocation } from "@/hooks/useLocation";
-import { authApi, servicesApi, uploadsApi } from "@/lib/api";
+import { authApi, getApiErrorMessage, servicesApi, uploadsApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { MediaAsset, ServiceCategory, ServiceProvider } from "@/types";
 import { CATEGORY_LABELS } from "@/types";
@@ -112,7 +112,7 @@ export default function ProfilePage() {
       toast.success("Account updated");
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.detail || "Could not update account");
+      toast.error(getApiErrorMessage(err, "Could not update account"));
     },
   });
 
@@ -170,7 +170,7 @@ export default function ProfilePage() {
       toast.success(isExistingProvider ? "Provider profile updated" : "Provider profile created");
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.detail || "Could not save provider profile");
+      toast.error(getApiErrorMessage(err, "Could not save provider profile"));
     },
   });
 
@@ -194,7 +194,7 @@ export default function ProfilePage() {
       toast.success("Live provider location updated");
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.detail || err.message || "Could not update live location");
+      toast.error(getApiErrorMessage(err, "Could not update live location"));
     },
   });
   const uploadMutation = useMutation({
@@ -218,7 +218,7 @@ export default function ProfilePage() {
       toast.success("File uploaded");
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.detail || err.message || "Upload failed");
+      toast.error(getApiErrorMessage(err, "Upload failed"));
     },
   });
   const deleteAssetMutation = useMutation({
@@ -228,7 +228,7 @@ export default function ProfilePage() {
       toast.success("File deleted");
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.detail || "Could not delete file");
+      toast.error(getApiErrorMessage(err, "Could not delete file"));
     },
   });
 

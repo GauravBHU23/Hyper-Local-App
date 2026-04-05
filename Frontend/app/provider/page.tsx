@@ -6,7 +6,7 @@ import { CheckCircle2, Clock3, IndianRupee, Loader2, MapPin, ShieldCheck } from 
 import toast from "react-hot-toast";
 
 import { Navbar } from "@/components/layout/Navbar";
-import { bookingsApi } from "@/lib/api";
+import { bookingsApi, getApiErrorMessage } from "@/lib/api";
 import { cn, formatCurrency, formatDate, getMapsDirectionsLink, getStatusColor } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import type { Booking, BookingStatus, ProviderEarningsStats } from "@/types";
@@ -44,7 +44,7 @@ export default function ProviderDashboardPage() {
       toast.success("Booking updated");
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.detail || "Could not update booking");
+      toast.error(getApiErrorMessage(err, "Could not update booking"));
     },
   });
   const completeMutation = useMutation({
@@ -56,7 +56,7 @@ export default function ProviderDashboardPage() {
       toast.success("Booking marked completed");
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.detail || "Could not complete booking");
+      toast.error(getApiErrorMessage(err, "Could not complete booking"));
     },
   });
 

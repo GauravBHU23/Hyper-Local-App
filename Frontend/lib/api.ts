@@ -20,6 +20,11 @@ export const directApi = axios.create({
 });
 
 function getAuthHeaders() {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+function getAuthToken() {
   let token = useAuthStore.getState().token;
 
   if (typeof window !== "undefined") {
@@ -40,7 +45,7 @@ function getAuthHeaders() {
     }
   }
 
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token || null;
 }
 
 function createCooldownError(message: string) {
@@ -98,6 +103,31 @@ function attachInterceptors(instance: typeof api) {
 
 attachInterceptors(api);
 attachInterceptors(directApi);
+
+export function getApiErrorMessage(error: any, fallback = "Something went wrong") {
+  const detail = error?.response?.data?.detail;
+
+  if (typeof detail === "string" && detail.trim()) {
+    return detail;
+  }
+
+  if (Array.isArray(detail) && detail.length > 0) {
+    const first = detail[0];
+    if (typeof first === "string" && first.trim()) {
+      return first;
+    }
+    if (first?.msg) {
+      return String(first.msg);
+    }
+  }
+
+  const message = error?.response?.data?.message || error?.message;
+  if (typeof message === "string" && message.trim()) {
+    return message;
+  }
+
+  return fallback;
+}
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 
@@ -266,15 +296,22 @@ export const supportApi = {
 
 export const uploadsApi = {
   upload: (formData: FormData) =>
-    directApi.post("/api/uploads/", formData, {
-      headers: {},
+    api.post(`/api/uploads${getAuthToken() ? `?access_token=${encodeURIComponent(getAuthToken()!)}` : ""}`, formData, {
+      headers: {
+        "Content-Type": undefined as unknown as string,
+        ...getAuthHeaders(),
+      },
     }),
   getMy: () =>
-    directApi.get("/api/uploads/my", {
-      headers: {},
+    api.get(`/api/uploads/my${getAuthToken() ? `?access_token=${encodeURIComponent(getAuthToken()!)}` : ""}`, {
+      headers: {
+        ...getAuthHeaders(),
+      },
     }),
   delete: (assetId: string) =>
-    directApi.delete(`/api/uploads/${assetId}`, {
-      headers: {},
+    api.delete(`/api/uploads/${assetId}${getAuthToken() ? `?access_token=${encodeURIComponent(getAuthToken()!)}` : ""}`, {
+      headers: {
+        ...getAuthHeaders(),
+      },
     }),
 };

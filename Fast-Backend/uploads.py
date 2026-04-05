@@ -33,8 +33,7 @@ def _delete_asset_file(file_url: str) -> None:
         pass
 
 
-@router.post("/", response_model=schemas.MediaAssetResponse, status_code=201)
-async def upload_asset(
+async def _create_upload_asset(
     asset_type: str = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -96,6 +95,26 @@ async def upload_asset(
     db.commit()
     db.refresh(asset)
     return asset
+
+
+@router.post("", response_model=schemas.MediaAssetResponse, status_code=201)
+async def upload_asset_no_slash(
+    asset_type: str = Form(...),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    return await _create_upload_asset(asset_type, file, db, current_user)
+
+
+@router.post("/", response_model=schemas.MediaAssetResponse, status_code=201)
+async def upload_asset(
+    asset_type: str = Form(...),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    return await _create_upload_asset(asset_type, file, db, current_user)
 
 
 @router.get("/my", response_model=list[schemas.MediaAssetResponse])

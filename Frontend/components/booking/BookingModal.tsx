@@ -5,7 +5,7 @@ import { Calendar, CheckCircle, Loader2, MapPin, Wrench, X } from "lucide-react"
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-import { bookingsApi } from "@/lib/api";
+import { bookingsApi, getApiErrorMessage } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import type { ServiceProvider } from "@/types";
@@ -104,7 +104,7 @@ export function BookingModal({
         onClose();
       }, 1800);
     } catch (err: any) {
-      toast.error(err.response?.data?.detail || "Booking failed. Please try again.");
+      toast.error(getApiErrorMessage(err, "Booking failed. Please try again."));
     } finally {
       setLoading(false);
     }

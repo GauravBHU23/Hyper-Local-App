@@ -113,12 +113,12 @@ export function AIChat() {
   };
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-64px)] max-w-3xl flex-col">
-      <div className="flex items-center gap-3 border-b border-slate-100 bg-white px-4 py-3">
+    <div className="mx-auto flex h-[calc(100dvh-64px)] w-full max-w-3xl min-h-0 flex-col overflow-hidden">
+      <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 bg-white px-3 py-3 sm:px-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 shadow">
           <Bot size={20} className="text-white" />
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <h2 className="text-sm font-semibold text-slate-900">HyperLocal AI</h2>
           <div className="flex items-center gap-1.5 text-xs text-green-600">
             <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-green-500" />
@@ -126,14 +126,14 @@ export function AIChat() {
           </div>
         </div>
         {coords && (
-          <div className="ml-auto flex items-center gap-1 text-xs text-slate-400">
+          <div className="hidden items-center gap-1 text-xs text-slate-400 sm:flex">
             <MapPin size={11} />
             Location detected
           </div>
         )}
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+      <div className="flex-1 space-y-4 overflow-y-auto overscroll-contain px-3 py-4 sm:px-4">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -157,12 +157,7 @@ export function AIChat() {
               )}
             </div>
 
-            <div
-              className={cn(
-                "max-w-[80%] space-y-3",
-                msg.role === "user" ? "items-end" : "items-start"
-              )}
-            >
+            <div className="min-w-0 max-w-[calc(100%-2.75rem)] space-y-3 sm:max-w-[85%]">
               <div
                 className={cn(
                   "rounded-2xl px-4 py-3 text-sm leading-relaxed",
@@ -175,7 +170,7 @@ export function AIChat() {
               </div>
 
               {msg.chatData && (
-                <div className="space-y-2">
+                <div className="min-w-0 space-y-2">
                   {(msg.chatData.estimated_cost_range || msg.chatData.best_time_to_book) && (
                     <div className="flex flex-wrap gap-2">
                       {msg.chatData.estimated_cost_range && (
@@ -240,7 +235,7 @@ export function AIChat() {
       </div>
 
       {messages.length <= 1 && (
-        <div className="scrollbar-hide flex gap-2 overflow-x-auto px-4 py-2">
+        <div className="scrollbar-hide flex gap-2 overflow-x-auto px-3 py-2 sm:px-4">
           {QUICK_PROMPTS.map((prompt) => (
             <button
               key={prompt}
@@ -253,8 +248,8 @@ export function AIChat() {
         </div>
       )}
 
-      <div className="border-t border-slate-100 bg-white px-4 py-3">
-        <div className="flex items-end gap-2">
+      <div className="border-t border-slate-100 bg-white px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:px-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <input
             ref={inputRef}
             value={input}
@@ -268,7 +263,7 @@ export function AIChat() {
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || loading}
-            className="btn-primary rounded-xl p-3 disabled:opacity-50"
+            className="btn-primary flex w-full items-center justify-center rounded-xl p-3 disabled:opacity-50 sm:w-auto"
           >
             {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </button>

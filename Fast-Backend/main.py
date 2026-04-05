@@ -1,4 +1,5 @@
 from collections import deque
+import re
 from time import time
 
 from fastapi import FastAPI, Request
@@ -49,6 +50,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
+    allow_origin_regex=settings.CORS_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -65,6 +67,48 @@ app.include_router(ai_chat.router, prefix="/api/ai", tags=["AI Chat"])
 app.include_router(reviews.router, prefix="/api/reviews", tags=["Reviews"])
 app.include_router(support.router, prefix="/api/support", tags=["Support"])
 app.mount("/uploads", StaticFiles(directory=Path(__file__).resolve().parent / "uploads"), name="uploads")
+
+
+def _origin_allowed(origin: str | None) -> bool:
+    if not origin:
+        return False
+    if origin in settings.CORS_ORIGINS:
+        return True
+    if settings.CORS_ORIGIN_REGEX:
+        try:
+            return re.fullmatch(settings.CORS_ORIGIN_REGEX, origin) is not None
+        except re.error:
+            return False
+    return False
+
+
+@app.middleware("http")
+async def ensure_cors_headers(request: Request, call_next):
+    origin = request.headers.get("origin")
+
+    if request.method == "OPTIONS" and _origin_allowed(origin):
+        return JSONResponse(
+            status_code=200,
+            content={"ok": True},
+            headers={
+                "Access-Control-Allow-Origin": origin,
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": request.headers.get("access-control-request-headers", "*"),
+                "Vary": "Origin",
+            },
+        )
+
+    response = await call_next(request)
+
+    if _origin_allowed(origin):
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = request.headers.get("access-control-request-headers", "*")
+        response.headers["Vary"] = "Origin"
+
+    return response
 
 
 @app.middleware("http")

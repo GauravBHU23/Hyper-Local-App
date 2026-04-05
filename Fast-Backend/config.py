@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
 
     CORS_ORIGINS: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])
+    CORS_ORIGIN_REGEX: Optional[str] = r"https://.*\.vercel\.app"
     ADMIN_EMAILS: List[str] = Field(default_factory=lambda: ["admin@hyperlocal.dev"])
 
     ANTHROPIC_API_KEY: Optional[str] = None

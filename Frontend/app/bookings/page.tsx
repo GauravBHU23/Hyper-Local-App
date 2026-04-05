@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Calendar, MapPin, Clock, Loader2, X, Star, CreditCard, ShieldCheck, LifeBuoy, Receipt } from "lucide-react";
-import { bookingsApi, paymentsApi, reviewsApi, supportApi } from "@/lib/api";
+import { bookingsApi, getApiErrorMessage, paymentsApi, reviewsApi, supportApi } from "@/lib/api";
 import { Navbar } from "@/components/layout/Navbar";
 import type { Booking, BookingStatus, Payment, PaymentInvoice, SupportTicket } from "@/types";
 import { CATEGORY_ICONS, CATEGORY_LABELS } from "@/types";
@@ -166,7 +166,7 @@ export default function BookingsPage() {
       }));
       toast.success("Booking rescheduled");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not reschedule booking"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not reschedule booking")),
   });
 
   const reviewMutation = useMutation({
@@ -185,7 +185,7 @@ export default function BookingsPage() {
       }));
       toast.success("Review submitted");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not submit review"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not submit review")),
   });
   const paymentCreateMutation = useMutation({
     mutationFn: ({ bookingId, method }: { bookingId: string; method: "online" | "cod" | "manual_upi" }) =>
@@ -199,7 +199,7 @@ export default function BookingsPage() {
           await openRazorpayCheckout(payment);
           return;
         } catch (err: any) {
-          const message = err?.message || err?.response?.data?.detail;
+          const message = getApiErrorMessage(err, "");
           if (message && message !== "Payment popup closed") {
             toast.error(message);
           }
@@ -211,7 +211,7 @@ export default function BookingsPage() {
       }
       toast.success(payment.gateway_status_message || "Payment initiated");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not create payment"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not create payment")),
   });
   const paymentConfirmMutation = useMutation({
     mutationFn: ({ paymentId, payload }: { paymentId: string; payload?: { gateway_payment_id?: string; gateway_signature?: string } }) =>
@@ -228,7 +228,7 @@ export default function BookingsPage() {
         toast.error("Payment done, but invoice could not be opened.");
       }
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not confirm payment"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not confirm payment")),
   });
   const supportMutation = useMutation({
     mutationFn: (payload: { booking_id: string; title: string; message: string }) =>
@@ -241,7 +241,7 @@ export default function BookingsPage() {
       }));
       toast.success("Support request created");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not create support request"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not create support request")),
   });
 
   return (
@@ -479,7 +479,7 @@ export default function BookingsPage() {
                               const invoiceRes = await paymentsApi.getInvoice(payment.id);
                               openInvoiceWindow(invoiceRes.data as PaymentInvoice);
                             } catch (err: any) {
-                              toast.error(err.response?.data?.detail || "Could not open invoice");
+                              toast.error(getApiErrorMessage(err, "Could not open invoice"));
                             }
                           }}
                           className="btn-secondary text-sm"
@@ -522,7 +522,7 @@ export default function BookingsPage() {
                               onClick={() => {
                                 if (payment.gateway_name === "razorpay" && payment.gateway_order_id && payment.gateway_key_id) {
                                   openRazorpayCheckout(payment).catch((err: any) => {
-                                    const message = err?.message || err?.response?.data?.detail;
+                                    const message = getApiErrorMessage(err, "");
                                     if (message && message !== "Payment popup closed") {
                                       toast.error(message);
                                     }

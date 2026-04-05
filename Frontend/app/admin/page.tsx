@@ -6,7 +6,7 @@ import { AlertTriangle, BadgeCheck, FileBadge, Loader2, Shield, Users, Wrench } 
 import toast from "react-hot-toast";
 
 import { Navbar } from "@/components/layout/Navbar";
-import { adminApi, bookingsApi, supportApi } from "@/lib/api";
+import { adminApi, bookingsApi, getApiErrorMessage, supportApi } from "@/lib/api";
 import { cn, formatDate } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import type { AdminOverview, AuditLog, Booking, BookingStatus, MediaAsset, Review, ServiceProvider, SupportTicket, User } from "@/types";
@@ -117,7 +117,7 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
       toast.success("Booking updated");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not update booking"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not update booking")),
   });
   const providerMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) => adminApi.updateProvider(id, data),
@@ -125,7 +125,7 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
       toast.success("Provider updated");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not update provider"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not update provider")),
   });
   const reviewMutation = useMutation({
     mutationFn: ({ id, is_flagged }: { id: string; is_flagged: boolean }) => adminApi.updateReview(id, { is_flagged }),
@@ -134,7 +134,7 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
       toast.success("Review moderation updated");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not update review"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not update review")),
   });
   const mediaMutation = useMutation({
     mutationFn: ({ id, is_verified }: { id: string; is_verified: boolean }) =>
@@ -144,7 +144,7 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
       toast.success(variables.is_verified ? "KYC approved" : "KYC reset");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not update KYC asset"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not update KYC asset")),
   });
   const supportMutation = useMutation({
     mutationFn: ({ id, status, admin_notes }: { id: string; status: string; admin_notes?: string }) =>
@@ -153,7 +153,7 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-support-tickets"] });
       toast.success("Support ticket updated");
     },
-    onError: (err: any) => toast.error(err.response?.data?.detail || "Could not update support ticket"),
+    onError: (err: any) => toast.error(getApiErrorMessage(err, "Could not update support ticket")),
   });
 
   const loading =
