@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 248 250 252;
+    --foreground: 15 23 42;
+    --primary: 234 88 12;
+    --primary-foreground: 255 255 255;
+    --card: 255 255 255;
+    --border: 226 232 240;
+    --muted: 241 245 249;
+    --muted-foreground: 100 116 139;
+    --accent: 255 237 213;
+    --destructive: 239 68 68;
+  }
+
+  * {
+    @apply border-slate-200;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-4;
+  }
+
+  .btn-primary {
+    @apply bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-semibold
+           px-5 py-2.5 rounded-xl transition-all duration-150 disabled:opacity-50
+           disabled:cursor-not-allowed shadow-sm hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-slate-50 text-slate-700 font-medium border border-slate-200
+           px-5 py-2.5 rounded-xl transition-all duration-150;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-white
+           focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent
+           placeholder:text-slate-400 text-sm transition-all;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Chat bubble animation */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.chat-bubble {
+  animation: slideUp 0.2s ease-out;
+}
+
+/* Pulse dot for online indicator */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}

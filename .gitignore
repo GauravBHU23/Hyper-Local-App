@@ -1,0 +1,46 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Root env / logs
+.env
+.env.local
+*.log
+
+# Frontend (Next.js / Node)
+Frontend/node_modules/
+Frontend/.next/
+Frontend/out/
+Frontend/build/
+Frontend/.turbo/
+Frontend/coverage/
+Frontend/npm-debug.log*
+Frontend/yarn-debug.log*
+Frontend/yarn-error.log*
+Frontend/pnpm-debug.log*
+
+# Backend (Python)
+Fast-Backend/.venv/
+Fast-Backend/venv/
+Fast-Backend/__pycache__/
+Fast-Backend/**/*.pyc
+Fast-Backend/.pytest_cache/
+Fast-Backend/.mypy_cache/
+Fast-Backend/.ruff_cache/
+Fast-Backend/.coverage
+Fast-Backend/htmlcov/
+
+# Backend runtime files
+Fast-Backend/uploads/
+Fast-Backend/*.log
+Fast-Backend/.backend-*.log
+
+# Local env files
+Fast-Backend/.env
+Frontend/.env
+Frontend/.env.local
+Frontend/.env.development.local
+Frontend/.env.test.local
+Frontend/.env.production.local
