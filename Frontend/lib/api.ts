@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 
+const DEFAULT_LOCAL_BACKEND = "http://127.0.0.1:8001";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/backend";
 const DIRECT_BACKEND_BASE =
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   process.env.NEXT_PUBLIC_BACKEND_PUBLIC_URL ||
-  "http://127.0.0.1:8001";
+  (typeof window === "undefined" ? DEFAULT_LOCAL_BACKEND : "/backend");
 const MUTATION_COOLDOWN_MS = 10_000;
 const mutationCooldowns = new Map<string, number>();
 
